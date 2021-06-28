@@ -15,7 +15,9 @@
     "content_scripts": [
       {
         "matches": [
-            "http://jira.fr.exalog.net/*", "https://jira.fr.exalog.net/*"
+            "http://jira.fr.exalog.net/*"
+            , "https://jira.fr.exalog.net/*"
+            , "https://www.google.com/*"
         ],
         "js": [
             "helper.js",

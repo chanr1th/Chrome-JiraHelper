@@ -153,54 +153,9 @@
 		}
 		return second;
 	}
-	Helper.prototype._getReportHeader = function() {
-		return `<thead>
-			<tr>
-				<th>&nbsp;</th>
-				<th colspan="6" align="center" style="color:white;">
-					ROJECT DETAIL
-				</th>
-				<th>&nbsp;</th>
-				<th>&nbsp;</th>
-				<th>&nbsp;</th>
-				<th>&nbsp;</th>
-			</tr>
-			<tr>
-				<th rowspan="2">#</th>
-				<th rowspan="2">VERSION</th>
-				<th>JIRA</th>
-				<th>TYPE</th>
-				<th rowspan="2" width="30%">TITLE</th>
-				<th rowspan="2">STATUS</th>
-				<th rowspan="2">NAME</th>
-				<th>% DONE</th>
-				<th rowspan="2">ESTIMATED TIME</th>
-				<th rowspan="2">REMAINING TIME</th>
-				<th rowspan="2" width="20%">COMMENTS</th>
-			</tr>
-			<tr>
-				<th>(Principal Task)</th>
-				<th>D/FT</th>
-				<th>(Current Status)</th>
-			</tr>
-		</thead>`;
-	}
-	Helper.prototype._generateReportBody = function(data) {
-		let tableBody = '<tbody>';
-		data.forEach((d, i) => {
-			d = d.map(v => v || '&nbsp;');
-			tableBody += `<tr><td>${++i}<td>`+ d.join('<td>');
-		});
-		tableBody += '</tbody>';
-		return tableBody;
-	}
 	Helper.prototype.generateReportTable = function(data) {
-		let table = document.createElement('table');
-		table.id = this.tbReportId;
-		let tableHeader = this._getReportHeader();
-		let tableBody = this._generateReportBody(data);
-		table.innerHTML = tableHeader + tableBody;
-		return table;
+		let tbReport = new TableReport(this.tbReportId, data);
+		return tbReport.getElement();
 	}
 	Helper.prototype.generateHtmlButton = function(label, type = 'primary') {
 		let btn = document.createElement('button');
@@ -269,8 +224,81 @@
 			});
 		});
 	}
+	Helper.prototype.getTable = function(obj) {
+		let data = [
+			['1','2','3','4','5','6','7','8','9','0']
+			, ['1','2','3','4','5','6','7','8','9','0']
+		];
+		let tbReport = new TableReport('table-report', data);
+		return tbReport.getElement();
+	}
+	//////Class///////
+	class TableReport {
+		constructor(id, data) {
+			this.id = id;
+			this.data = data;
+		}
+		getHeader() {
+			let tableHeader = document.createElement('thead');
+			tableHeader.innerHTML = `
+				<tr>
+					<th>&nbsp;</th>
+					<th colspan="6" align="center" style="color:white;">
+						ROJECT DETAIL
+					</th>
+					<th>&nbsp;</th>
+					<th>&nbsp;</th>
+					<th>&nbsp;</th>
+					<th>&nbsp;</th>
+				</tr>
+				<tr>
+					<th rowspan="2">#</th>
+					<th rowspan="2">VERSION</th>
+					<th>JIRA</th>
+					<th>TYPE</th>
+					<th rowspan="2" width="30%">TITLE</th>
+					<th rowspan="2">STATUS</th>
+					<th rowspan="2">NAME</th>
+					<th>% DONE</th>
+					<th rowspan="2">ESTIMATED TIME</th>
+					<th rowspan="2">REMAINING TIME</th>
+					<th rowspan="2" width="20%">COMMENTS</th>
+				</tr>
+				<tr>
+					<th>(Principal Task)</th>
+					<th>D/FT</th>
+					<th>(Current Status)</th>
+				</tr>
+			`;
+			return tableHeader;
+		}
+		getBody() {
+			let tableBody = document.createElement('tbody');
+			this.data.forEach((d, i) => {
+				d = d.map(v => v || '&nbsp;');
+				tableBody.innerHTML += `<tr><td>${++i}<td>`+ d.join('<td>');
+			});
+			return tableBody;
+		}
+		getElement() {
+			let table = document.createElement('table');
+			if (this.id) {
+				table.id = this.id;
+			}
+			let header = this.getHeader();
+			if (header) {
+				table.appendChild(header);
+			}
+			let body = this.getBody();
+			if (body) {
+				table.appendChild(body);
+			}
+			return table;
+		}
+	}
 })();
 
-// let helper = new Helper();
-// let time = helper.parseHumanReadableTime(32460);
+// let test = new Helper();
+// let time = test.parseHumanReadableTime(32460);
 // console.log('parsed Time', time);
+// console.log(test.getTable());
