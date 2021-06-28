@@ -4,10 +4,10 @@
 	Helper = function () {
 		this.modalId = 'bh-modal';
 		this.tbReportId = 'tb-report';
-		// this.reporterName = 'Chanrith TANG';
-		this.readLocalStorage('reporterName').then(value => {
-			this.reporterName = value || 'Chanrith TANG';
-		});
+		this.reporterName = 'Chanrith TANG';
+		this.readLocalStorage('reporterName')
+			.then(value => this.reporterName = value)
+			.catch(error => console.log(error));
 	}
 	Helper.prototype.test = function(obj) {
 		console.log(obj);
@@ -258,19 +258,19 @@
 			comment
 		];
 	}
-	Helper.prototype.readLocalStorage = function(key) {
+	Helper.prototype.readLocalStorage = async function(key) {
 		return new Promise((resolve, reject) => {
 			chrome.storage.sync.get([key], function(result) {
-				if (result[key] != undefined) {
+				if (result[key]) {
 					resolve(result[key]);
 				} else {
-					reject();
+					reject(`Storage : ${key} is empty!`);
 				}
 			});
 		});
 	}
 })();
 
-// let JiraHelper = new Helper.Jira();
-// let time = JiraHelper.parseHumanReadableTime(32460);
+// let helper = new Helper();
+// let time = helper.parseHumanReadableTime(32460);
 // console.log('parsed Time', time);

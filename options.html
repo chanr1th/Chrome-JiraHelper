@@ -1,18 +1,30 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <style>
-      button {
-        height: 30px;
-        width: 30px;
-        outline: none;
-        margin: 10px;
-      }
-    </style>
-  </head>
-  <body>
-    <div id="buttonDiv">
-    </div>
-  </body>
-  <script src="options.js"></script>
+<head>
+	<style>
+	button {
+		height: 30px;
+		width: 30px;
+		outline: none;
+		margin: 10px;
+	}
+</style>
+</head>
+<body>
+	<h3>Setting</h3>
+	<table>
+		<tbody>
+			<tr>
+				<td class="nowrap">
+					<label for="reporter-name">Reporter name</label>
+				</td>
+				<td class="nowrap">
+					: <input type="text" id="reporter-name">
+				</td>
+			</tr>
+		</tbody>
+	</table>
+	<input type="button" id="btn-save" value="Save">
+</body>
+<script src="options.js"></script>
 </html>
