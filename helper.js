@@ -215,7 +215,7 @@
 	}
 	Helper.prototype.readLocalStorage = async function(key) {
 		return new Promise((resolve, reject) => {
-			chrome.storage.sync.get([key], function(result) {
+			chrome.storage.local.get([key], function(result) {
 				if (result[key]) {
 					resolve(result[key]);
 				} else {
@@ -233,11 +233,32 @@
 		return tbReport.getElement();
 	}
 	//////Class///////
-	class TableReport {
+	class TableTemplate {
 		constructor(id, data) {
 			this.id = id;
 			this.data = data;
+			this.table = document.createElement('table');
 		}
+		getHeader() {
+			return document.createElement('thead');
+		}
+		getBody() {
+			return document.createElement('tbody');
+		}
+		getFooter() {
+			return document.createElement('tfoot');
+		}
+		getElement() {
+			if (this.id) {
+				this.table.id = this.id;
+			}
+			this.table.appendChild(this.getHeader());
+			this.table.appendChild(this.getBody());
+			this.table.appendChild(this.getFooter());
+			return this.table;
+		}
+	}
+	class TableReport extends TableTemplate {
 		getHeader() {
 			let tableHeader = document.createElement('thead');
 			tableHeader.innerHTML = `
@@ -280,25 +301,10 @@
 			});
 			return tableBody;
 		}
-		getElement() {
-			let table = document.createElement('table');
-			if (this.id) {
-				table.id = this.id;
-			}
-			let header = this.getHeader();
-			if (header) {
-				table.appendChild(header);
-			}
-			let body = this.getBody();
-			if (body) {
-				table.appendChild(body);
-			}
-			return table;
-		}
 	}
 })();
 
-// let test = new Helper();
+let test = new Helper();
 // let time = test.parseHumanReadableTime(32460);
 // console.log('parsed Time', time);
-// console.log(test.getTable());
+console.log(test.getTable());

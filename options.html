@@ -14,7 +14,7 @@
 		html, body {
 			margin: 0;
 			padding: 0;
-			font-size: 18px;
+			font-size: 16px;
 			color: var(--color);
 			font-family: Verdana, Arial;
 			background: var(--color-primary);
@@ -26,8 +26,15 @@
 			background: var(--color-secondary);
 			border-radius: 8px;
 		}
-		main footer {
-			padding: 24px 24px 0 24px;
+		main > header > span {
+			font-size: 1.2rem;
+			font-weight: bold;
+		}
+		main > section  {
+			padding: 24px 0;
+		}
+		main > footer {
+			/**/
 		}
 		.button {
 			color: white;
@@ -38,7 +45,7 @@
 			align-items: center;
 			justify-content: center;
 			font-weight: bold;
-			padding: 4px 24px;
+			padding: 6px 28px;
 			font-size: 1rem;
 			border: none;
 			border-radius: 2px;
@@ -48,7 +55,7 @@
 <body>
 	<main>
 		<header>
-			<h2>Settings</h2>
+			<span>Settings</span>
 		</header>
 		<section>
 			<table>

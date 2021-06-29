@@ -1,9 +1,9 @@
 'use strict';
 
 let reporterName = document.getElementById('reporter-name');
-chrome.storage.sync.get('reporterName', function(data) {
-	reporterName.value = data.reporterName || 'Chanrith TANG';
+chrome.storage.local.get(['reporterName'], function(data) {
+	reporterName.value = data.reporterName || '';
 });
 reporterName.oninput = function(e) {
-	chrome.storage.sync.set({reporterName: e.target.value});
+	chrome.storage.local.set({reporterName: e.target.value});
 }
