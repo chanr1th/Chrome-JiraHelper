@@ -1,8 +1,17 @@
-'use strict';
 (() => {
+	'use strict';
 	let helper = new Helper();
 	////////////////TEST//////////////////////
-	
+	let modal = new ModalCopy('ct-modal');
+	document.body.appendChild(modal.getElement());
+	modal.setTitle(`Daily Report : today`)
+		.setBody('body content')
+		.setOkButtonText('Copy Table')
+		// .setOkButtonOnClick(function(){alert('copied');})
+		.setCancelButtonText('Close')
+		// .setCancelButtonOnClick(function(){alert('close');})
+		;
+	modal.show();
 	//////////////////////////////////////////
 	chrome.storage.onChanged.addListener(function(changes, namespace) {
 		for (let key in changes) {
@@ -53,7 +62,11 @@
 					}
 				}
 			});
+			//////////////////
 			const COPY_REPORT_BUTTON_NAME = 'tempoCopyReportButton';
+			// let modal = new ModalCopy();
+			// modal.hide();
+			// window.body.appendChild(modal.getElement());
 			Array.from(calendarListViewDay).forEach((el) => {//name=calendarListViewDayViewDay
 				// let isToday = el.className === 'sc-bstyWg haopul tempo-mywork-calendar-today drop-zone';
 				// let isToday = el.classList.contains('tempo-mywork-calendar-today');
@@ -125,6 +138,8 @@
 								footerContainer.appendChild(btnCopyTable);
 								footerContainer.appendChild(btnCloseModal);
 								helper.showModal(bodyContainer, `Daily Report : ${strDate}`, footerContainer);
+								// modal.setTitle(`Daily Report : ${strDate}`).setBody(bodyContainer);
+								// modal.show();
 							}).finally(() => {
 								document.body.style.cursor = '';
 							});

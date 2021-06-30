@@ -1,52 +1,56 @@
-#tb-report {
+#ct-report {
     color: #0B5394;
     border-collapse: collapse;
     font-family: arial;
     font-size: 12px;
     width: 100%;
 }
-#tb-report thead tr:first-child {
+#ct-report thead tr:first-child {
     background-color: #0B5394;
 }
-#tb-report thead tr {
+#ct-report thead tr {
     background-color: #F3F3F3;
 }
-#tb-report thead tr:nth-child(3) th {
+#ct-report thead tr:nth-child(3) th {
     border-top-width: 0;
     font-size: .6em;
 }
-#tb-report thead tr th {
+#ct-report thead tr th {
     padding: 4px 8px;
     white-space: nowrap;
     border-left: 1px solid #b7b7b7;
     border-right: 1px solid #b7b7b7;
     line-height: 1rem;
 }
-#tb-report tbody tr td {
+#ct-report tbody tr td {
     text-align: center;
     padding: 4px 8px;
     border: 1px solid #b7b7b7;
     white-space: nowrap;
 }
-#tb-report tbody tr td:nth-child(5),
-#tb-report tbody tr td:nth-child(7),
-#tb-report tbody tr td:nth-child(11) {
+#ct-report tbody tr td:nth-child(5),
+#ct-report tbody tr td:nth-child(7),
+#ct-report tbody tr td:nth-child(11) {
     white-space: normal;
 }
-#tb-report tbody tr td:nth-child(5),
-#tb-report tbody tr td:nth-child(11) {
+#ct-report tbody tr td:nth-child(5),
+#ct-report tbody tr td:nth-child(11) {
     text-align: left;
 }
-#tb-report tbody tr td:nth-child(11) {
+#ct-report tbody tr td:nth-child(11) {
     color: red;
 }
-#bh-modal.modal-backdrop {
+#ct-modal.modal-backdrop {
     inset: 0;
     z-index: 999;
     position: fixed;
     background-color: rgba(0 , 0, 0, .3);
+    visibility: hidden;
 }
-#bh-modal .modal {
+#ct-modal.modal-backdrop.show {
+    visibility: visible;
+}
+#ct-modal .modal {
     width: 90%;
     max-width: 1500px;
     min-height: 50px;
@@ -60,21 +64,21 @@
     border-radius: 8px;
     padding: 24px;
 }
-#bh-modal .modal header {
+#ct-modal .modal header {
     padding:  12px 0;
 }
-#bh-modal .modal-title {
+#ct-modal .modal-title {
     font-weight: bold;
     font-size: 1.5rem;
 }
-#bh-modal .modal-close {
+#ct-modal .modal-close {
     position: absolute;
     top: 4px;
     right: 12px;
 }
-#bh-modal .modal section {
+#ct-modal .modal section {
     padding: 12px 0;
 }
-#bh-modal .modal footer {
+#ct-modal .modal footer {
     padding: 12px 0;
 }

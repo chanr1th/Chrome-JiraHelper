@@ -1,9 +1,13 @@
 'use strict';
-(() => {
-	window.Helper = window.Helper || {}; // check for or create the object
-	Helper = function () {
-		this.modalId = 'bh-modal';
-		this.tbReportId = 'tb-report';
+
+/**
+ * Helper Constructs
+ * @constructor
+ */
+class Helper {
+	constructor() {
+		this.modalId = 'ct-modal';
+		this.tbReportId = 'ct-report';
 		this.reporterName = 'Chanrith TANG';
 		chrome.storage.sync.get(['reporterName'], (data) => {
 			if (typeof data.reporterName === 'undefined' || !data.reporterName) {
@@ -13,10 +17,7 @@
 			}
 		});
 	}
-	Helper.prototype.test = function(obj) {
-		console.log(obj);
-	}
-	Helper.prototype.copyElement = function(elementId) {
+	copyElement(elementId) {
 		let body = document.body, range, sel;
 		let element = document.getElementById(elementId);
 		if (document.createRange && window.getSelection) {
@@ -38,7 +39,7 @@
 		document.execCommand("copy");
 		sel.removeAllRanges();
 	}
-	Helper.prototype.copyText = function(copyText, msgSuccess) {
+	copyText(copyText, msgSuccess) {
 		navigator.clipboard.writeText(copyText).then(function() {
 			if (typeof msgSuccess === 'string') {
 				alert(msgSuccess);
@@ -47,7 +48,7 @@
 			console.error('Failed! clipboard not copied.');
 		});
 	}
-	Helper.prototype.generateModal = function(content = '', title = '', footer = '') {
+	generateModal(content = '', title = '', footer = '') {
 		let backdrop = document.createElement('div');
 		backdrop.id = this.modalId;
 		backdrop.className = 'modal-backdrop';
@@ -75,7 +76,7 @@
 		backdrop.appendChild(modal);
 		return backdrop;
 	}
-	Helper.prototype.showModal = function(content = '', title = 'Modal', footer = '') {
+	showModal(content = '', title = 'Modal Title', footer = '') {
 		let modal = document.getElementById('bh-modal');
 		if (modal) {
 			let modalTitle = modal.querySelector('.modal-title');
@@ -91,13 +92,13 @@
 		//let modalBody = document.querySelector('#bh-modal .modal section');
 		modal.style.visibility = 'visible';
 	}
-	Helper.prototype.hideModal = function() {
+	hideModal() {
 		let modal = document.getElementById(this.modalId);
 		if (modal) {
 			modal.style.visibility = 'hidden';
 		}
 	}
-	Helper.prototype.setElementContent = function(element, content, type = 'html') {
+	setElementContent(element, content, type = 'html') {
 		if (type === 'text') {
 			element.textContent = content;
 		} else {
@@ -109,7 +110,7 @@
 			}
 		}
 	}
-	Helper.prototype.parseHumanReadableTime = function(second) {
+	parseHumanReadableTime(second) {
 		const ONE_MINUTE = 60;// 60s = 1m
 		const ONE_HOUR = 3600;// 3600s = 1h
 		const ONE_DAY = 28800;// 28800s = 8h = 1d
@@ -132,7 +133,7 @@
 		}
 		return result.join(' ');
 	}
-	Helper.prototype.parseTime = function(strTime) {
+	parseTime(strTime) {
 		// let durations = loggedTime[0].textContent.split(' of ')[0].split(" ");
 		let durations = strTime.split(" ");
 		let second = 0;
@@ -157,11 +158,11 @@
 		}
 		return second;
 	}
-	Helper.prototype.generateReportTable = function(data) {
+	generateReportTable(data) {
 		let tbReport = new TableReport(this.tbReportId, data);
 		return tbReport.getElement();
 	}
-	Helper.prototype.generateHtmlButton = function(label, type = 'primary') {
+	generateHtmlButton(label, type = 'primary') {
 		let btn = document.createElement('button');
 		switch (type) {
 			case 'secondary':
@@ -176,9 +177,8 @@
 		btn.textContent = label;
 		return btn;
 	}
-	Helper.prototype.retrieveWorklog = async function (tasks) {
+	async retrieveWorklog (tasks) {
 		let result = [];
-		// this.reporterName = await this.readLocalStorage('reporterName');
 		for (let i = 0 ;i < tasks.length ; i++) {
 			result.push(
 				await fetch(`/rest/api/2/issue/${tasks[i]}`)
@@ -188,7 +188,7 @@
 		}
 		return Promise.resolve(result);
 	}
-	Helper.prototype.retrieveProfile = function (tasks) {
+	retrieveProfile (tasks) {
 		fetch(`/rest/api/2/myself`)
 		.then(resp => resp.json())
 		.then(resp => {
@@ -198,7 +198,7 @@
 			}
 		});
 	}
-	Helper.prototype._formatReponse = function (data) {
+	_formatReponse (data) {
 		let issueType = '';
 		data.fields.issuetype.name.split(' ').forEach((e) => {
 			issueType += e.charAt(0).toUpperCase();
@@ -227,18 +227,7 @@
 			comment
 		];
 	}
-	Helper.prototype.readLocalStorage = async function(key) {
-		return new Promise((resolve, reject) => {
-			chrome.storage.sync.get([key], function(result) {
-				if (result[key]) {
-					resolve(result[key]);
-				} else {
-					reject(`Storage : ${key} is empty!`);
-				}
-			});
-		});
-	}
-	Helper.prototype.getTable = function(obj) {
+	getTable(obj) {//testing function
 		let data = [
 			['1','2','3','4','5','6','7','8','9','0']
 			, ['1','2','3','4','5','6','7','8','9','0']
@@ -246,79 +235,222 @@
 		let tbReport = new TableReport('table-report', data);
 		return tbReport.getElement();
 	}
-	//////////Class//////////
-	class TableTemplate {
-		constructor(id, data) {
-			this.id = id;
-			this.data = data;
-			this.table = document.createElement('table');
-		}
-		getHeader() {
-			return document.createElement('thead');
-		}
-		getBody() {
-			return document.createElement('tbody');
-		}
-		getFooter() {
-			return document.createElement('tfoot');
-		}
-		getElement() {
-			if (this.id) {
-				this.table.id = this.id;
+}
+//////////Class//////////
+class Html {
+	static setContent(element, content, type = 'html') {
+		if (type === 'text') {
+			element.textContent = content;
+		} else {
+			element.innerHTML = '';
+			if (content instanceof HTMLElement) {
+				element.appendChild(content);
+			} else {
+				element.innerHTML = content;
 			}
-			this.table.appendChild(this.getHeader());
-			this.table.appendChild(this.getBody());
-			this.table.appendChild(this.getFooter());
-			return this.table;
 		}
 	}
-	class TableReport extends TableTemplate {
-		getHeader() {
-			let tableHeader = document.createElement('thead');
-			tableHeader.innerHTML = `
-				<tr>
-					<th>&nbsp;</th>
-					<th colspan="6" align="center" style="color:white;">
-						ROJECT DETAIL
-					</th>
-					<th>&nbsp;</th>
-					<th>&nbsp;</th>
-					<th>&nbsp;</th>
-					<th>&nbsp;</th>
-				</tr>
-				<tr>
-					<th rowspan="2">#</th>
-					<th rowspan="2">VERSION</th>
-					<th>JIRA</th>
-					<th>TYPE</th>
-					<th rowspan="2" width="30%">TITLE</th>
-					<th rowspan="2">STATUS</th>
-					<th rowspan="2">NAME</th>
-					<th>% DONE</th>
-					<th rowspan="2">ESTIMATED TIME</th>
-					<th rowspan="2">REMAINING TIME</th>
-					<th rowspan="2" width="20%">COMMENTS</th>
-				</tr>
-				<tr>
-					<th>(Principal Task)</th>
-					<th>D/FT</th>
-					<th>(Current Status)</th>
-				</tr>
-			`;
-			return tableHeader;
+	static generateButton (text, type = 'primary') {
+		let btn = document.createElement('button');
+		switch (type) {
+			case 'secondary':
+				btn.className = 'aui-button aui-button-secondary';
+				break;
+			case 'cancel':
+				btn.className = 'aui-button aui-button-link cancel';
+				break;
+			default:
+				btn.className = 'aui-button aui-button-primary';
 		}
-		getBody() {
-			let tableBody = document.createElement('tbody');
-			this.data.forEach((d, i) => {
-				d = d.map(v => v || '&nbsp;');
-				tableBody.innerHTML += `<tr><td>${++i}<td>`+ d.join('<td>');
-			});
-			return tableBody;
-		}
+		btn.textContent = text;
+		return btn;
 	}
-})();
+}
+class TableTemplate {
+	/**
+	 * @constructor
+	 * @param {string} id   - HTML attribut id
+	 * @param {array}  data - array of row data
+	 */
+	constructor(id, data) {
+		this.id = id;
+		this.data = data;
+		this.table = document.createElement('table');
+	}
+	addHeader(table) {
+		table.appendChild(document.createElement('thead'));
+	}
+	addBody(table) {
+		table.appendChild(document.createElement('tbody'));
+	}
+	addFooter(table) {
+		table.appendChild(document.createElement('tfoot'));
+	}
+	getElement() {
+		if (this.id) {
+			this.table.id = this.id;
+		}
+		this.addHeader(this.table);
+		this.addBody(this.table);
+		this.addFooter(this.table);
+		return this.table;
+	}
+}
+class TableReport extends TableTemplate {
+	addHeader(table) {
+		let tableHeader = document.createElement('thead');
+		tableHeader.innerHTML = `
+			<tr>
+				<th>&nbsp;</th>
+				<th colspan="6" align="center" style="color:white;">
+					ROJECT DETAIL
+				</th>
+				<th>&nbsp;</th>
+				<th>&nbsp;</th>
+				<th>&nbsp;</th>
+				<th>&nbsp;</th>
+			</tr>
+			<tr>
+				<th rowspan="2">#</th>
+				<th rowspan="2">VERSION</th>
+				<th>JIRA</th>
+				<th>TYPE</th>
+				<th rowspan="2" width="30%">TITLE</th>
+				<th rowspan="2">STATUS</th>
+				<th rowspan="2">NAME</th>
+				<th>% DONE</th>
+				<th rowspan="2">ESTIMATED TIME</th>
+				<th rowspan="2">REMAINING TIME</th>
+				<th rowspan="2" width="20%">COMMENTS</th>
+			</tr>
+			<tr>
+				<th>(Principal Task)</th>
+				<th>D/FT</th>
+				<th>(Current Status)</th>
+			</tr>
+		`;
+		table.appendChild(tableHeader);
+	}
+	addBody(table) {
+		let tableBody = document.createElement('tbody');
+		this.data.forEach((d, i) => {
+			d = d.map(v => v || '&nbsp;');
+			tableBody.innerHTML += `<tr><td>${++i}<td>`+ d.join('<td>');
+		});
+		table.appendChild(tableBody);
+	}
+}
+class ModalTemplate {
+	constructor(id) {
+		this.id = id;
+		this.backdrop = document.createElement('div');
+		this.modal = document.createElement('div');
+		this.header = document.createElement('header');
+		this.title = document.createElement('span');
+		this.close = document.createElement('a');
+		this.body = document.createElement('section');
+		this.footer = document.createElement('footer');
+	}
+	addHeader() {
+		this.title.className = 'modal-title';
+		this.close.className = 'modal-close';
+		this.close.href = 'javascript:void(0);';
+		this.close.innerHTML = '&times;';
+		this.close.addEventListener('click', e => this.hide());
+		this.header.appendChild(this.title);
+		this.header.appendChild(this.close);
+		this.modal.appendChild(this.header);
+	}
+	addBody() {
+		this.modal.appendChild(this.body);
+	}
+	addFooter() {
+		this.modal.appendChild(this.footer);
+	}
+	hide() {
+		this.backdrop.classList.toggle('show', false);
+	}
+	show() {
+		this.backdrop.classList.toggle('show', true);
+	}
+	setTitle(title) {
+		Html.setContent(this.title, title, 'text');
+		return this;
+	}
+	setBody(content) {
+		Html.setContent(this.body, content, 'html');
+		return this;
+	}
+	setFooter(content) {
+		Html.setContent(this.footer, content, 'html');
+		return this;
+	}
+	getElement() {
+		this.backdrop.id = this.id;
+		this.backdrop.className = 'modal-backdrop';
+		this.modal.className = 'modal';
+		this.addHeader();
+		this.addBody();
+		this.addFooter();
+		this.backdrop.appendChild(this.modal);
+		return this.backdrop;
+	}
+}
+class ModalCopy extends ModalTemplate {
+	constructor(id) {
+		super(id);
+		this.btnOk = Html.generateButton('Ok', 'primary');
+		this.btnCancel = Html.generateButton('Cancel', 'secondary');
+		this.btnCancel.addEventListener('click', e => this.hide());
+		this.message = document.createElement('span');
+	}
+	addFooter() {
+		super.addFooter();
+		let container = document.createElement('div');
+		container.style.display = 'flex';
+		this.message.style.display = 'flex';
+		this.message.style.flexGrow = 1;
+		this.message.style.alignItems = 'center';
+		container.appendChild(this.message);
+		container.appendChild(this.btnOk);
+		container.appendChild(this.btnCancel);
+		this.setFooter(container);
+	}
+	setOkButtonText(text) {
+		this.btnOk.textContent = text;
+		return this;
+	}
+	setOkButtonOnClick(callback) {
+		if (typeof callback === 'function') {
+			let newBtn = Html.generateButton(this.btnOk.textContent, 'secondary');
+			newBtn.addEventListener('click', e => callback());
+			this.btnOk.replaceWith(newBtn);
+		}
+		return this;
+	}
+	setCancelButtonText(text) {
+		this.btnCancel.textContent = text;
+		return this;
+	}
+	setCancelButtonOnClick(callback) {
+		if (typeof callback === 'function') {
+			let newBtn = Html.generateButton(this.btnCancel.textContent, 'secondary');
+			newBtn.addEventListener('click', e => callback());
+			this.btnCancel.replaceWith(newBtn);
+		}
+		return this;
+	}
+}
 
 // let test = new Helper();
 // let time = test.parseHumanReadableTime(32460);
 // console.log('parsed Time', time);
 // console.log(test.getTable());
+
+// let data = [
+// 	['1','2','3','4','5','6','7','8','9','0']
+// 	, ['1','2','3','4','5','6','7','8','9','0']
+// ];
+// let tbReport = new TableReport('table-report', data);
+// console.log(tbReport.getElement());
+
