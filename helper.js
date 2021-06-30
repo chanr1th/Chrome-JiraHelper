@@ -106,27 +106,27 @@
 		}
 	}
 	Helper.prototype.parseHumanReadableTime = function(second) {
-		const ONE_DAY = 28800;// 28800s = 8h = 1d
-		const ONE_HOUR = 3600;// 3600s = 1h
 		const ONE_MINUTE = 60;// 60s = 1m
-		let day = 0, hour = 0, minute = 0;
-		let readableTime = [];
+		const ONE_HOUR = 3600;// 3600s = 1h
+		const ONE_DAY = 28800;// 28800s = 8h = 1d
+		const ONE_WEEK = 144000;// 144000s = 5d = 1w
+		let result = [];
+		if (second >= ONE_WEEK) {
+			result.push(parseInt(second / ONE_WEEK) + 'w');
+			second = second % ONE_WEEK;
+		}
 		if (second >= ONE_DAY) {
-			day = parseInt(second/ONE_DAY);
-			second = second - (day*ONE_DAY);
-			readableTime.push(`${day}d`);
+			result.push(parseInt(second / ONE_DAY) + 'd');
+			second = second % ONE_DAY;
 		}
 		if (second >= ONE_HOUR) {
-			hour = parseInt(second/ONE_HOUR);
-			second = second - (hour*ONE_HOUR);
-			readableTime.push(`${hour}h`);
+			result.push(parseInt(second / ONE_HOUR) + 'h');
+			second = second % ONE_HOUR;
 		}
 		if (second >= ONE_MINUTE) {
-			minute = parseInt(second/ONE_MINUTE);
-			//second = second - (minute*ONE_MINUTE);
-			readableTime.push(`${minute}m`);
+			result.push(parseInt(second / ONE_MINUTE) + 'm');
 		}
-		return readableTime.join(' ');
+		return result.join(' ');
 	}
 	Helper.prototype.parseTime = function(strTime) {
 		// let durations = loggedTime[0].textContent.split(' of ')[0].split(" ");

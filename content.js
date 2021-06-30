@@ -86,11 +86,24 @@
 							.then(resp => {
 								let tableReport = helper.generateReportTable(resp);
 								let footerContainer = document.createElement('div');
-								footerContainer.style.textAlign = 'right';
+								footerContainer.style.display = 'flex';
+								let message = document.createElement('span');
+								message.style.display = 'flex';
+								message.style.flexGrow = 1;
+								message.style.alignItems = 'center';
 								let btnCopyTable = helper.generateHtmlButton('Copy Table');
-								btnCopyTable.addEventListener('click', e => helper.copyElement(helper.tbReportId));
+								btnCopyTable.addEventListener('click', e => {
+									helper.copyElement(helper.tbReportId);
+									message.textContent = 'Table has copied to clipboard';
+									message.style.color = 'green';
+									setTimeout(function() {
+										message.textContent = '';
+										message.style.color = '';
+									}, 3000);
+								});
 								let btnCloseModal = helper.generateHtmlButton('Close', 'secondary');
 								btnCloseModal.addEventListener('click', e => helper.hideModal());
+								footerContainer.appendChild(message);
 								footerContainer.appendChild(btnCopyTable);
 								footerContainer.appendChild(btnCloseModal);
 								helper.showModal(tableReport, `Daily Report : ${strDate}`, footerContainer);
