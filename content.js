@@ -4,6 +4,17 @@
 	////////////////TEST//////////////////////
 	
 	//////////////////////////////////////////
+	chrome.storage.onChanged.addListener(function(changes, namespace) {
+		for (let key in changes) {
+			let newValue = changes[key].newValue;
+			switch(key) {
+				case 'reporterName':
+					helper.reporterName = newValue;
+					console.log('change reporter name = ', newValue);
+					break;
+			}
+		}
+	});
 	if (location.href.startsWith('https://jira.fr.exalog.net/secure/Tempo.jspa')) {
 		let attempt = 0;
 		if (location.hash.startsWith('#/my-work/week')) {
@@ -73,7 +84,7 @@
 					btnLeft.textContent = 'Excel';
 					btnLeft.className = el.querySelector('[name=tempoCalendarLogWork]').className;
 					btnLeft.addEventListener('click', (e) => {
-						helper.retrieveData(tasks)
+						helper.retrieveWorklog(tasks)
 							.then(resp => resp.map(v => v.join('\t')))
 							.then(result => helper.copyText(result.join("\n"), `${result.length} Result copied!`));
 					});
@@ -82,9 +93,15 @@
 					btnRight.className = el.querySelector('[name=tempoCalendarPlanTime]').className;
 					btnRight.addEventListener('click', (e) => {
 						document.body.style.cursor = 'wait';
-						helper.retrieveData(tasks)
+						helper.retrieveWorklog(tasks)
 							.then(resp => {
+								let bodyContainer = document.createElement('div');
 								let tableReport = helper.generateReportTable(resp);
+								let note = document.createElement('div');
+								note.innerHTML = `Reporter name is <b>${helper.reporterName}</b>. This name can change in settings.`
+								bodyContainer.appendChild(tableReport);
+								bodyContainer.appendChild(note);
+
 								let footerContainer = document.createElement('div');
 								footerContainer.style.display = 'flex';
 								let message = document.createElement('span');
@@ -103,10 +120,11 @@
 								});
 								let btnCloseModal = helper.generateHtmlButton('Close', 'secondary');
 								btnCloseModal.addEventListener('click', e => helper.hideModal());
+
 								footerContainer.appendChild(message);
 								footerContainer.appendChild(btnCopyTable);
 								footerContainer.appendChild(btnCloseModal);
-								helper.showModal(tableReport, `Daily Report : ${strDate}`, footerContainer);
+								helper.showModal(bodyContainer, `Daily Report : ${strDate}`, footerContainer);
 							}).finally(() => {
 								document.body.style.cursor = '';
 							});

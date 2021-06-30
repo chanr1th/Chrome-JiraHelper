@@ -5,9 +5,13 @@
 		this.modalId = 'bh-modal';
 		this.tbReportId = 'tb-report';
 		this.reporterName = 'Chanrith TANG';
-		this.readLocalStorage('reporterName')
-			.then(value => this.reporterName = value)
-			.catch(error => console.log(error));
+		chrome.storage.sync.get(['reporterName'], (data) => {
+			if (typeof data.reporterName === 'undefined' || !data.reporterName) {
+				this.retrieveProfile();
+			} else {
+				this.reporterName = data.reporterName;
+			}
+		});
 	}
 	Helper.prototype.test = function(obj) {
 		console.log(obj);
@@ -172,17 +176,27 @@
 		btn.textContent = label;
 		return btn;
 	}
-	Helper.prototype.retrieveData = async function (tasks) {
+	Helper.prototype.retrieveWorklog = async function (tasks) {
 		let result = [];
 		// this.reporterName = await this.readLocalStorage('reporterName');
 		for (let i = 0 ;i < tasks.length ; i++) {
 			result.push(
-				await fetch(`/rest/api/latest/issue/${tasks[i]}`)
+				await fetch(`/rest/api/2/issue/${tasks[i]}`)
 					.then(resp => resp.json())
 					.then(resp => this._formatReponse(resp))
 			);
 		}
 		return Promise.resolve(result);
+	}
+	Helper.prototype.retrieveProfile = function (tasks) {
+		fetch(`/rest/api/2/myself`)
+		.then(resp => resp.json())
+		.then(resp => {
+			if (typeof resp.displayName !== 'undefined') {
+				this.reporterName = resp.displayName;console.log("who is thi", this);
+				chrome.storage.sync.set({reporterName : resp.displayName});
+			}
+		});
 	}
 	Helper.prototype._formatReponse = function (data) {
 		let issueType = '';
@@ -232,12 +246,33 @@
 		let tbReport = new TableReport('table-report', data);
 		return tbReport.getElement();
 	}
-	//////Class///////
-	class TableReport {
+	//////////Class//////////
+	class TableTemplate {
 		constructor(id, data) {
 			this.id = id;
 			this.data = data;
+			this.table = document.createElement('table');
 		}
+		getHeader() {
+			return document.createElement('thead');
+		}
+		getBody() {
+			return document.createElement('tbody');
+		}
+		getFooter() {
+			return document.createElement('tfoot');
+		}
+		getElement() {
+			if (this.id) {
+				this.table.id = this.id;
+			}
+			this.table.appendChild(this.getHeader());
+			this.table.appendChild(this.getBody());
+			this.table.appendChild(this.getFooter());
+			return this.table;
+		}
+	}
+	class TableReport extends TableTemplate {
 		getHeader() {
 			let tableHeader = document.createElement('thead');
 			tableHeader.innerHTML = `
@@ -279,21 +314,6 @@
 				tableBody.innerHTML += `<tr><td>${++i}<td>`+ d.join('<td>');
 			});
 			return tableBody;
-		}
-		getElement() {
-			let table = document.createElement('table');
-			if (this.id) {
-				table.id = this.id;
-			}
-			let header = this.getHeader();
-			if (header) {
-				table.appendChild(header);
-			}
-			let body = this.getBody();
-			if (body) {
-				table.appendChild(body);
-			}
-			return table;
 		}
 	}
 })();

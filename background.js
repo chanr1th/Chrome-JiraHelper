@@ -1,10 +1,8 @@
 'use strict';
 
 chrome.runtime.onInstalled.addListener(function(details) {
-	if (details.reason === "install") {
-		// Code to be executed on first install
-		chrome.storage.sync.set({reporterName: ''});
-		chrome.tabs.create({ url: "options.html" });
+	if (details.reason === "install") {// first time install
+		//chrome.tabs.create({ url: "options.html" });
 		//chrome.tabs.create({ 'url': 'chrome://extensions/?options=' + chrome.runtime.id });//show popup
 	} else if (details.reason === "update") {
 		// When extension is updated
@@ -13,4 +11,5 @@ chrome.runtime.onInstalled.addListener(function(details) {
 	} else if (details.reason === "shared_module_update") {
 		// When a shared module is updated
 	}
+	// chrome.tabs.create({ 'url': 'chrome://extensions/?options=' + chrome.runtime.id });//show option as popup dialog
 });
