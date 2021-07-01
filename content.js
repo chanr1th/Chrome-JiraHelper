@@ -1,18 +1,7 @@
 (() => {
 	'use strict';
+
 	let helper = new Helper();
-	////////////////TEST//////////////////////
-	let modal = new ModalCopy('ct-modal');
-	document.body.appendChild(modal.getElement());
-	modal.setTitle(`Daily Report : today`)
-		.setBody('body content')
-		.setOkButtonText('Copy Table')
-		// .setOkButtonOnClick(function(){alert('copied');})
-		.setCancelButtonText('Close')
-		// .setCancelButtonOnClick(function(){alert('close');})
-		;
-	modal.show();
-	//////////////////////////////////////////
 	chrome.storage.onChanged.addListener(function(changes, namespace) {
 		for (let key in changes) {
 			let newValue = changes[key].newValue;
@@ -64,9 +53,8 @@
 			});
 			//////////////////
 			const COPY_REPORT_BUTTON_NAME = 'tempoCopyReportButton';
-			// let modal = new ModalCopy();
-			// modal.hide();
-			// window.body.appendChild(modal.getElement());
+			let modal = new ModalConfirm(helper.modalId);
+			document.body.appendChild(modal.getElement());
 			Array.from(calendarListViewDay).forEach((el) => {//name=calendarListViewDayViewDay
 				// let isToday = el.className === 'sc-bstyWg haopul tempo-mywork-calendar-today drop-zone';
 				// let isToday = el.classList.contains('tempo-mywork-calendar-today');
@@ -97,9 +85,13 @@
 					btnLeft.textContent = 'Excel';
 					btnLeft.className = el.querySelector('[name=tempoCalendarLogWork]').className;
 					btnLeft.addEventListener('click', (e) => {
+						document.body.style.cursor = 'wait';
 						helper.retrieveWorklog(tasks)
 							.then(resp => resp.map(v => v.join('\t')))
-							.then(result => helper.copyText(result.join("\n"), `${result.length} Result copied!`));
+							.then(result => helper.copyText(result.join("\n"), `${result.length} Result copied!`))
+							.finally(() => {
+								document.body.style.cursor = '';
+							});
 					});
 					let btnRight = document.createElement('div');
 					btnRight.textContent = 'HTML';
@@ -109,37 +101,27 @@
 						helper.retrieveWorklog(tasks)
 							.then(resp => {
 								let bodyContainer = document.createElement('div');
-								let tableReport = helper.generateReportTable(resp);
+								let tbReport = new TableReport(helper.tbReportId, resp);
+								let tableReport = tbReport.getElement();
 								let note = document.createElement('div');
-								note.innerHTML = `Reporter name is <b>${helper.reporterName}</b>. This name can change in settings.`
+								note.innerHTML = `Current reporter name is <b>${helper.reporterName}</b>. This name can change in settings.`
 								bodyContainer.appendChild(tableReport);
 								bodyContainer.appendChild(note);
-
-								let footerContainer = document.createElement('div');
-								footerContainer.style.display = 'flex';
-								let message = document.createElement('span');
-								message.style.display = 'flex';
-								message.style.flexGrow = 1;
-								message.style.alignItems = 'center';
-								let btnCopyTable = helper.generateHtmlButton('Copy Table');
-								btnCopyTable.addEventListener('click', e => {
-									helper.copyElement(helper.tbReportId);
-									message.textContent = 'Table has copied to clipboard';
-									message.style.color = 'green';
-									setTimeout(function() {
-										message.textContent = '';
-										message.style.color = '';
-									}, 3000);
-								});
-								let btnCloseModal = helper.generateHtmlButton('Close', 'secondary');
-								btnCloseModal.addEventListener('click', e => helper.hideModal());
-
-								footerContainer.appendChild(message);
-								footerContainer.appendChild(btnCopyTable);
-								footerContainer.appendChild(btnCloseModal);
-								helper.showModal(bodyContainer, `Daily Report : ${strDate}`, footerContainer);
-								// modal.setTitle(`Daily Report : ${strDate}`).setBody(bodyContainer);
-								// modal.show();
+								// setting up modal
+								modal.setTitle(`Daily Report : ${strDate}`)
+									.setBody(bodyContainer)
+									.setOkButtonText('Copy Table')
+									.setOkButtonOnClick(function() {
+										helper.copyElement(helper.tbReportId);
+										modal.message.textContent = 'Table has copied to clipboard';
+										modal.message.style.color = 'green';
+										setTimeout(function() {
+											modal.message.textContent = '';
+											modal.message.style.color = '';
+										}, 3000);
+									})
+									.setCancelButtonText('Close');
+								modal.show();
 							}).finally(() => {
 								document.body.style.cursor = '';
 							});

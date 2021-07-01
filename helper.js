@@ -48,68 +48,6 @@ class Helper {
 			console.error('Failed! clipboard not copied.');
 		});
 	}
-	generateModal(content = '', title = '', footer = '') {
-		let backdrop = document.createElement('div');
-		backdrop.id = this.modalId;
-		backdrop.className = 'modal-backdrop';
-		let modal = document.createElement('div');
-		modal.className = 'modal';
-		let modalHeader = document.createElement('header');
-		let modalTitle = document.createElement('span');
-		modalTitle.className = 'modal-title';
-		modalTitle.textContent = title;
-		let modalClose = document.createElement('a');
-		modalClose.className = 'modal-close';
-		modalClose.href = 'javascript:void(0);';
-		modalClose.innerHTML = '&times;';
-		modalClose.addEventListener('click', e => this.hideModal());
-		modalHeader.appendChild(modalTitle);
-		modalHeader.appendChild(modalClose);
-		let modalBody = document.createElement('section');
-		this.setElementContent(modalBody, content);
-		let modalFooter = document.createElement('footer');
-		this.setElementContent(modalFooter, footer);
-
-		modal.appendChild(modalHeader);
-		modal.appendChild(modalBody);
-		modal.appendChild(modalFooter);
-		backdrop.appendChild(modal);
-		return backdrop;
-	}
-	showModal(content = '', title = 'Modal Title', footer = '') {
-		let modal = document.getElementById('bh-modal');
-		if (modal) {
-			let modalTitle = modal.querySelector('.modal-title');
-			modalTitle.textContent = title;
-			let modalBody = modal.querySelector('section');
-			this.setElementContent(modalBody, content);
-			let modalFooter = modal.querySelector('footer');
-			this.setElementContent(modalFooter, footer);
-		} else {
-			modal = this.generateModal(content, title, footer);
-			document.body.appendChild(modal);
-		}
-		//let modalBody = document.querySelector('#bh-modal .modal section');
-		modal.style.visibility = 'visible';
-	}
-	hideModal() {
-		let modal = document.getElementById(this.modalId);
-		if (modal) {
-			modal.style.visibility = 'hidden';
-		}
-	}
-	setElementContent(element, content, type = 'html') {
-		if (type === 'text') {
-			element.textContent = content;
-		} else {
-			element.innerHTML = '';
-			if (content instanceof HTMLElement) {
-				element.appendChild(content);
-			} else {
-				element.innerHTML = content;
-			}
-		}
-	}
 	parseHumanReadableTime(second) {
 		const ONE_MINUTE = 60;// 60s = 1m
 		const ONE_HOUR = 3600;// 3600s = 1h
@@ -158,32 +96,13 @@ class Helper {
 		}
 		return second;
 	}
-	generateReportTable(data) {
-		let tbReport = new TableReport(this.tbReportId, data);
-		return tbReport.getElement();
-	}
-	generateHtmlButton(label, type = 'primary') {
-		let btn = document.createElement('button');
-		switch (type) {
-			case 'secondary':
-				btn.className = 'aui-button aui-button-secondary';
-				break;
-			case 'cancel':
-				btn.className = 'aui-button aui-button-link cancel';
-				break;
-			default:
-				btn.className = 'aui-button aui-button-primary';
-		}
-		btn.textContent = label;
-		return btn;
-	}
 	async retrieveWorklog (tasks) {
 		let result = [];
 		for (let i = 0 ;i < tasks.length ; i++) {
 			result.push(
 				await fetch(`/rest/api/2/issue/${tasks[i]}`)
 					.then(resp => resp.json())
-					.then(resp => this._formatReponse(resp))
+					.then(resp => this.formatReponse(resp))
 			);
 		}
 		return Promise.resolve(result);
@@ -198,7 +117,7 @@ class Helper {
 			}
 		});
 	}
-	_formatReponse (data) {
+	formatReponse (data) {
 		let issueType = '';
 		data.fields.issuetype.name.split(' ').forEach((e) => {
 			issueType += e.charAt(0).toUpperCase();
@@ -227,16 +146,7 @@ class Helper {
 			comment
 		];
 	}
-	getTable(obj) {//testing function
-		let data = [
-			['1','2','3','4','5','6','7','8','9','0']
-			, ['1','2','3','4','5','6','7','8','9','0']
-		];
-		let tbReport = new TableReport('table-report', data);
-		return tbReport.getElement();
-	}
 }
-//////////Class//////////
 class Html {
 	static setContent(element, content, type = 'html') {
 		if (type === 'text') {
@@ -396,7 +306,7 @@ class ModalTemplate {
 		return this.backdrop;
 	}
 }
-class ModalCopy extends ModalTemplate {
+class ModalConfirm extends ModalTemplate {
 	constructor(id) {
 		super(id);
 		this.btnOk = Html.generateButton('Ok', 'primary');
@@ -422,7 +332,7 @@ class ModalCopy extends ModalTemplate {
 	}
 	setOkButtonOnClick(callback) {
 		if (typeof callback === 'function') {
-			let newBtn = Html.generateButton(this.btnOk.textContent, 'secondary');
+			let newBtn = Html.generateButton(this.btnOk.textContent, 'primary');
 			newBtn.addEventListener('click', e => callback());
 			this.btnOk.replaceWith(newBtn);
 		}
@@ -442,6 +352,7 @@ class ModalCopy extends ModalTemplate {
 	}
 }
 
+//////////Test//////////
 // let test = new Helper();
 // let time = test.parseHumanReadableTime(32460);
 // console.log('parsed Time', time);
