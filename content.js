@@ -50,9 +50,8 @@
 						logTime.style.color = 'red';
 						let remainingLogTime = helper.parseHumanReadableTime(MIN_TIME - logged);
 						let recommend = helper.getRecommendLogTime(logged);
-						logTime.title += ` | ${remainingLogTime} more | recommand ${recommend}`;
+						logTime.title = `${logTime.textContent} | ${remainingLogTime} more | recommand ${recommend}`;
 					}
-
 				}
 			});
 

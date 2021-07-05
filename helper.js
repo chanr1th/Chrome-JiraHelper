@@ -124,33 +124,37 @@ class Helper {
 		});
 	}
 	formatReponse (data) {
-		let issueType = '';
-		data.fields.issuetype.name.split(' ').forEach((e) => {
-			issueType += e.charAt(0).toUpperCase();
-		});
-		let fixVersion = 'None'
-		if (typeof data.fields.fixVersions !== 'undefined' && data.fields.fixVersions.length > 0) {
-			fixVersion = data.fields.fixVersions[0].name;
+		if (data && data.hasOwnProperty('fields')) {
+			let issueType = '';
+			data.fields.issuetype.name.split(' ').forEach((e) => {
+				issueType += e.charAt(0).toUpperCase();
+			});
+			let fixVersion = 'None'
+			if (typeof data.fields.fixVersions !== 'undefined' && data.fields.fixVersions.length > 0) {
+				fixVersion = data.fields.fixVersions[0].name;
+			}
+			let estimateTime = this.parseHumanReadableTime(data.fields.progress.total) || '0';
+			let done = (data.fields.progress.percent || '0') + '%'
+			let remainingEstimate = (data.fields.timetracking.remainingEstimate || '0');
+			let comment = '';
+			if (typeof data.fields.worklog.worklogs !== 'undefined' && data.fields.worklog.worklogs.length > 0) {
+				comment = data.fields.worklog.worklogs.pop().comment;//last worklog comment
+			}
+			return [
+				fixVersion,
+				data.key,
+				issueType,
+				data.fields.summary || '',
+				data.fields.status.name || '',
+				this.reporterName,
+				done,
+				estimateTime,
+				remainingEstimate,
+				comment
+			];
+		} else {
+			return data;
 		}
-		let estimateTime = this.parseHumanReadableTime(data.fields.progress.total) || '0';
-		let done = (data.fields.progress.percent || '0') + '%'
-		let remainingEstimate = (data.fields.timetracking.remainingEstimate || '0');
-		let comment = '';
-		if (typeof data.fields.worklog.worklogs !== 'undefined' && data.fields.worklog.worklogs.length > 0) {
-			comment = data.fields.worklog.worklogs.pop().comment;//last worklog comment
-		}
-		return [
-			fixVersion,
-			data.key,
-			issueType,
-			data.fields.summary || '',
-			data.fields.status.name || '',
-			this.reporterName,
-			done,
-			estimateTime,
-			remainingEstimate,
-			comment
-		];
 	}
 	/**
 	 * get recommend log time
@@ -170,7 +174,7 @@ class Helper {
 		let sign = recommendTime >= 0 ? '+' : '-';
 		let recommend = sign + this.parseHumanReadableTime(recommendTime*3600);
 		// console.log('debug:recommend time: now - start - breakTime - loggedTime = recommendTime; actualRecommendTime');
-		// console.log(`debug:recommend time: ${now} - 8.5 - ${breakTime} - ${loggedTime/3600} = ${recommendTime}; ${carrier}${recommend}`);
+		// console.log(`debug:recommend time: ${now} - 8.5 - ${breakTime} - ${loggedTime/3600} = ${recommendTime}; ${sign}${recommend}`);
 		return recommend
 	}
 }
