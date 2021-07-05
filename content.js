@@ -36,22 +36,27 @@
 				return 0;
 			}
 			attempt = 0; // reset attempt
+
+			//////////Calendar/Header//////////
 			let calendarCanvasDayHeader = document.getElementsByName('calendarCanvasDayHeader');
 			Array.from(calendarCanvasDayHeader).forEach((el) => {
-				let loggedDate = el.querySelector('.sc-jGDUUe');//ex: Sun dd.mm
-				let loggedTime = el.querySelector('.sc-hPZeXZ');//ex: 7h 38m of 7h 30m
-				if (loggedDate && loggedTime) {
-					let second = helper.parseTime(loggedTime.textContent.split(' of ')[0]);
-					let isWeekday = ['Sat', 'Sun'].indexOf(loggedDate.title.split(' ')[0]) === -1;
+				let logDate = el.querySelector('.sc-jGDUUe');//ex: Sun dd.mm
+				let logTime = el.querySelector('.sc-hPZeXZ');//ex: 7h 38m of 7h 30m
+				if (logDate && logTime) {
+					let logged = helper.parseTime(logTime.textContent.split(' of ')[0]);
+					let isWeekday = ['Sat', 'Sun'].indexOf(logDate.title.split(' ')[0]) === -1;
 					const MIN_TIME = 27000;// 27000s = 450m = 7h 30m
-					if (second < MIN_TIME && isWeekday) {
-						loggedTime.style.color = 'red';
-						let remainingLogTime = helper.parseHumanReadableTime(MIN_TIME - second);
-						loggedTime.title += ` | at least ${remainingLogTime} more`;
+					if (logged < MIN_TIME && isWeekday) {
+						logTime.style.color = 'red';
+						let remainingLogTime = helper.parseHumanReadableTime(MIN_TIME - logged);
+						let recommend = helper.getRecommendLogTime(logged);
+						logTime.title += ` | ${remainingLogTime} more | recommand ${recommend}`;
 					}
+
 				}
 			});
-			//////////////////
+
+			//////////Calendar/List/Day//////////
 			const COPY_REPORT_BUTTON_NAME = 'tempoCopyReportButton';
 			let modal = new ModalConfirm(helper.modalId);
 			document.body.appendChild(modal.getElement());

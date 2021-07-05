@@ -16,6 +16,11 @@ class Helper {
 				this.reporterName = data.reporterName;
 			}
 		});
+		this.workingTime = {
+			start : 8.5 // 8:30am
+			, break : { from : 12 , to : 13.5 } // breaking time between 12pm to 1:30pm
+			, end : 18 // 6:00pm
+		};
 	}
 	copyElement(elementId) {
 		let body = document.body, range, sel;
@@ -54,6 +59,7 @@ class Helper {
 		const ONE_DAY = 28800;// 28800s = 8h = 1d
 		const ONE_WEEK = 144000;// 144000s = 5d = 1w
 		let result = [];
+		second = Math.abs(second);
 		if (second >= ONE_WEEK) {
 			result.push(parseInt(second / ONE_WEEK) + 'w');
 			second = second % ONE_WEEK;
@@ -145,6 +151,27 @@ class Helper {
 			remainingEstimate,
 			comment
 		];
+	}
+	/**
+	 * get recommend log time
+	 * @param  {number} loggedTime Logged time in second
+	 * @return {string}            Recommend log time
+	 */
+	getRecommendLogTime(loggedTime) {
+		let now = (new Date()).getHours() + ((new Date()).getMinutes() / 60);
+		let breakTime = 0;
+		// now = 16;
+		if (now > this.workingTime.break.from && now < this.workingTime.break.to) {// after breaking time
+			breakTime = now - this.workingTime.break.from;
+		} else if (now > this.workingTime.break.to) {
+			breakTime = this.workingTime.break.to - this.workingTime.break.from;
+		}
+		let recommendTime = now - this.workingTime.start - breakTime - (loggedTime/3600);
+		let sign = recommendTime >= 0 ? '+' : '-';
+		let recommend = sign + this.parseHumanReadableTime(recommendTime*3600);
+		// console.log('debug:recommend time: now - start - breakTime - loggedTime = recommendTime; actualRecommendTime');
+		// console.log(`debug:recommend time: ${now} - 8.5 - ${breakTime} - ${loggedTime/3600} = ${recommendTime}; ${carrier}${recommend}`);
+		return recommend
 	}
 }
 class Html {
