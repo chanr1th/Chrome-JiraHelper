@@ -1,5 +1,6 @@
-# TempoReport
-Chrome Extension : Jira tempo report generator
+# Chrome Extension : Jira tempo report generator
+- Generate report and copyable in text (Excel)
+- Generate report and copyable in HTML (Table)
 
 # Installing on Windows
 1. Allow this extension on Chrome by running "AllowThisExtensionOnChrome.reg"
