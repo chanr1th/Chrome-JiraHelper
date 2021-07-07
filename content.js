@@ -1,6 +1,13 @@
 (() => {
 	'use strict';
 
+	////////////TEST////////////
+	// let toast = (new Toast()).setEffect(Toast.EFFECT_EXPAN).build();
+	// console.log(toast);
+	// setTimeout(toast.show(), 5000);
+	// document.body.appendChild(toast.toast);
+	////////////////////////////
+
 	let helper = new Helper();
 	chrome.storage.onChanged.addListener(function(changes, namespace) {
 		for (let key in changes) {
@@ -57,8 +64,11 @@
 
 			//////////Calendar/List/Day//////////
 			const COPY_REPORT_BUTTON_NAME = 'tempoCopyReportButton';
-			let modal = new ModalConfirm(helper.modalId);
+			let modal = new ModalConfirm();
 			document.body.appendChild(modal.getElement());
+			let toast = new Toast();
+			toast.setEffect(Toast.EFFECT_EXPAND);
+			document.body.appendChild(toast.getElement());
 			Array.from(calendarListViewDay).forEach((el) => {//name=calendarListViewDayViewDay
 				// let isToday = el.className === 'sc-bstyWg haopul tempo-mywork-calendar-today drop-zone';
 				// let isToday = el.classList.contains('tempo-mywork-calendar-today');
@@ -92,7 +102,13 @@
 						document.body.style.cursor = 'wait';
 						helper.retrieveWorklog(tasks)
 							.then(resp => resp.map(v => v.join('\t')))
-							.then(result => helper.copyText(result.join("\n"), `${result.length} Result copied!`))
+							.then(result => {
+								helper.copyText(result.join("\n"))
+									.then(() => {
+										toast.setMessage(`${result.length} Result(s) copied!`);
+										toast.show();
+									});
+							})
 							.finally(() => {
 								document.body.style.cursor = '';
 							});
@@ -105,7 +121,7 @@
 						helper.retrieveWorklog(tasks)
 							.then(resp => {
 								let bodyContainer = document.createElement('div');
-								let tbReport = new TableReport(helper.tbReportId, resp);
+								let tbReport = new TableReport(resp);
 								let tableReport = tbReport.getElement();
 								let note = document.createElement('div');
 								note.innerHTML = `Current reporter name is <b>${helper.reporterName}</b>. This name can change in settings.`

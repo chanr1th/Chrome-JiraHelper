@@ -6,8 +6,6 @@
  */
 class Helper {
 	constructor() {
-		this.modalId = 'ct-modal';
-		this.tbReportId = 'ct-report';
 		this.reporterName = 'Chanrith TANG';
 		chrome.storage.sync.get(['reporterName'], (data) => {
 			if (typeof data.reporterName === 'undefined' || !data.reporterName) {
@@ -45,13 +43,14 @@ class Helper {
 		sel.removeAllRanges();
 	}
 	copyText(copyText, msgSuccess) {
-		navigator.clipboard.writeText(copyText).then(function() {
-			if (typeof msgSuccess === 'string') {
-				alert(msgSuccess);
-			}
-		}, function() {
-			console.error('Failed! clipboard not copied.');
-		});
+		// navigator.clipboard.writeText(copyText).then(function() {
+		// 	if (typeof msgSuccess === 'string') {
+		// 		alert(msgSuccess);
+		// 	}
+		// }, function() {
+		// 	console.error('Failed! clipboard not copied.');
+		// });
+		return navigator.clipboard.writeText(copyText);
 	}
 	parseHumanReadableTime(second) {
 		const ONE_MINUTE = 60;// 60s = 1m
@@ -125,14 +124,15 @@ class Helper {
 	}
 	formatReponse (data) {
 		if (data && data.hasOwnProperty('fields')) {
-			let issueType = '';
-			data.fields.issuetype.name.split(' ').forEach((e) => {
-				issueType += e.charAt(0).toUpperCase();
-			});
 			let fixVersion = 'None'
 			if (typeof data.fields.fixVersions !== 'undefined' && data.fields.fixVersions.length > 0) {
 				fixVersion = data.fields.fixVersions[0].name;
 			}
+			let issueType = '';
+			data.fields.issuetype.name.split(' ').forEach((e) => {
+				issueType += e.charAt(0).toUpperCase();
+			});
+			let status = data.fields.status.name || '';
 			let estimateTime = this.parseHumanReadableTime(data.fields.progress.total) || '0';
 			let done = (data.fields.progress.percent || '0') + '%'
 			let remainingEstimate = (data.fields.timetracking.remainingEstimate || '0');
@@ -145,7 +145,7 @@ class Helper {
 				data.key,
 				issueType,
 				data.fields.summary || '',
-				data.fields.status.name || '',
+				status.toUpperCase(),
 				this.reporterName,
 				done,
 				estimateTime,
@@ -238,12 +238,15 @@ class TableTemplate {
 	}
 }
 class TableReport extends TableTemplate {
+	constructor(data) {
+		super('ct-report', data);
+	}
 	addHeader(table) {
 		let tableHeader = document.createElement('thead');
 		tableHeader.innerHTML = `
 			<tr>
 				<th>&nbsp;</th>
-				<th colspan="6" align="center" style="color:white;">
+				<th colspan="6" align="center">
 					ROJECT DETAIL
 				</th>
 				<th>&nbsp;</th>
@@ -280,6 +283,7 @@ class TableReport extends TableTemplate {
 		});
 		table.appendChild(tableBody);
 	}
+	addFooter(table) {}
 }
 class ModalTemplate {
 	constructor(id) {
@@ -338,8 +342,8 @@ class ModalTemplate {
 	}
 }
 class ModalConfirm extends ModalTemplate {
-	constructor(id) {
-		super(id);
+	constructor() {
+		super('ct-modal');
 		this.btnOk = Html.generateButton('Ok', 'primary');
 		this.btnCancel = Html.generateButton('Cancel', 'secondary');
 		this.btnCancel.addEventListener('click', e => this.hide());
@@ -382,7 +386,62 @@ class ModalConfirm extends ModalTemplate {
 		return this;
 	}
 }
-
+class Toast {
+	constructor(message, icon) {
+		this.toast = document.createElement('div');
+		this.icon = document.createElement("div");
+		this.desc = document.createElement("div");
+		this.setIcon(icon);
+		this.setMessage(message);
+	}
+	static get EFFECT_EXPAND() {
+		return 'effect-expand';
+	}
+	show() {
+		if (!document.getElementById(this.toast.id)) {
+			document.body.appendChild(this.toast);
+		}
+		this.toast.classList.toggle('show', true);
+		setTimeout(() => this.toast.classList.toggle('show', false), 5000);
+	}
+	setEffect(effect) {
+		this.toast.classList.add(effect);
+		return this;
+	}
+	setIcon(icon = '😜') {
+		this.icon.innerHTML = '';
+		if (icon.startsWith('text:')) {
+			this.icon.textContent = icon.substr(icon.indexOf(':') + 1);
+		} else if(icon.startsWith('html:')) {
+			this.icon.innerHTML = icon.substr(icon.indexOf(':') + 1);
+		} else if (icon.startsWith('img:')) {
+			let img = document.createElement('img');
+			img.src = icon.substr(icon.indexOf(':') + 1);
+			img.width = img.height = 50;
+			this.icon.appendChild(img);
+		} else if (icon === 'check') {
+			this.icon.innerHTML = '&check;';
+		} else if (icon === 'cross') {
+			this.icon.innerHTML = '&cross;';
+		} else {
+			this.icon.textContent = icon;
+		}
+		return this;
+	}
+	setMessage(message) {
+		this.desc.innerHTML = message;
+		return this;
+	}
+	getElement() {
+		this.toast.id = 'ct-toast';
+		this.toast.classList.toggle('toast', true);
+		this.icon.classList.toggle('toast-icon', true);
+		this.desc.classList.toggle('toast-desc', true);
+		this.toast.appendChild(this.icon);
+		this.toast.appendChild(this.desc);
+		return this.toast;
+	}
+}
 //////////Test//////////
 // let test = new Helper();
 // let time = test.parseHumanReadableTime(32460);
