@@ -132,7 +132,7 @@
 									.setBody(bodyContainer)
 									.setOkButtonText('Copy Table')
 									.setOkButtonOnClick(function() {
-										helper.copyElement(helper.tbReportId);
+										helper.copyElement(tableReport.id);
 										modal.message.textContent = 'Table has copied to clipboard';
 										modal.message.style.color = 'green';
 										setTimeout(function() {

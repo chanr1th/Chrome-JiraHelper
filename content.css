@@ -1,9 +1,16 @@
+/*:root {
+    --toast-info : rgb(32, 99, 155);
+    --toast-succ : rgb(60, 174, 163);
+    --toast-warn : rgb(246, 213, 92);
+    --toast-erro : rgb(237, 85, 59);
+}*/
 #ct-report {
     color: #0B5394;
     border-collapse: collapse;
     font-family: arial;
     font-size: 12px;
     width: 100%;
+    min-width: 1300px;
 }
 #ct-report thead tr:first-child {
     background-color: #0B5394;
@@ -79,6 +86,7 @@
 }
 #ct-modal .modal section {
     padding: 12px 0;
+    overflow-x: auto;
 }
 #ct-modal .modal footer {
     padding: 12px 0;
@@ -89,7 +97,6 @@
     max-width: 50px;
     height: 50px;
     margin: auto;
-    background-color: #3282b8;
     color: white;
     position: fixed;
     z-index: 1000;
@@ -102,6 +109,9 @@
     overflow: hidden;
     display: flex;
     align-items: center;
+    background-color: #3282b8;
+    /*backdrop-filter: blur(10px);*/
+    /*background-color: rgb(32, 99, 155, .4);*/
 }
 #ct-toast>.toast-icon {
     min-width: 50px;
