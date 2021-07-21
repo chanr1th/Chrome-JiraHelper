@@ -5,6 +5,8 @@
     "description": "Jira Tempo : report generator",
     "permissions": [
         "storage"
+        , "contextMenus"
+        , "tabs"
     ],
     "background": {
         "scripts": [

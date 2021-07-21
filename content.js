@@ -45,20 +45,36 @@
 			attempt = 0; // reset attempt
 
 			//////////Calendar/Header//////////
-			let calendarCanvasDayHeader = document.getElementsByName('calendarCanvasDayHeader');
-			Array.from(calendarCanvasDayHeader).forEach((el) => {
-				let logDate = el.querySelector('.sc-jGDUUe');//ex: Sun dd.mm
-				let logTime = el.querySelector('.sc-hPZeXZ');//ex: 7h 38m of 7h 30m
-				if (logDate && logTime) {
-					let logged = helper.parseTime(logTime.textContent.split(' of ')[0]);
-					let isWeekday = ['Sat', 'Sun'].indexOf(logDate.title.split(' ')[0]) === -1;
-					const MIN_TIME = 27000;// 27000s = 450m = 7h 30m
-					if (logged < MIN_TIME && isWeekday) {
-						logTime.style.color = 'red';
-						let remainingLogTime = helper.parseHumanReadableTime(MIN_TIME - logged);
-						let recommend = helper.getRecommendLogTime(logged);
-						logTime.title = `${logTime.textContent} | ${remainingLogTime} more | recommand ${recommend}`;
+			function refreshRecommandTime() {
+				let calendarCanvasDayHeader = document.getElementsByName('calendarCanvasDayHeader');
+				Array.from(calendarCanvasDayHeader).forEach((el) => {
+					let logDate = el.querySelector('.sc-jGDUUe');//ex: Sun dd.mm
+					let logTime = el.querySelector('.sc-hPZeXZ');//ex: 7h 38m of 7h 30m
+					if (logDate && logTime) {
+						let [dayOfWeek, date] = logDate.title.split(' ');
+						let [day, month] = date.split('.');
+						let logged = helper.parseTime(logTime.textContent.split(' of ')[0]);
+						let isWeekday = ['Sat', 'Sun'].indexOf(dayOfWeek) === -1;
+						let isToday = day == (new Date()).getDate();
+						const MIN_TIME = 27000;// 27000s = 450m = 7h 30m
+						if (logged < MIN_TIME && isWeekday) {
+							logTime.style.color = 'red';
+							if (isToday) {
+								clearTimeout(window.toTimeInfo);
+								let infos = [];
+								infos.push(logTime.textContent);
+								infos.push(helper.parseHumanReadableTime(MIN_TIME - logged) + ' more');
+								infos.push('recommand = ' + helper.getRecommendLogTime(logged));
+								logTime.title = infos.join(' | ');
+							}
+						}
 					}
+				});
+			}
+			refreshRecommandTime();
+			chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+				if (request === "refreshRecommandTime") {
+					refreshRecommandTime();
 				}
 			});
 
@@ -99,7 +115,7 @@
 					btnLeft.textContent = 'Excel';
 					btnLeft.className = el.querySelector('[name=tempoCalendarLogWork]').className;
 					btnLeft.addEventListener('click', (e) => {
-						document.body.style.cursor = 'wait';
+						btnCopyReport.style.cursor = 'wait';
 						helper.retrieveWorklog(tasks)
 							.then(resp => resp.map(v => v.join('\t')))
 							.then(result => {
@@ -110,14 +126,14 @@
 									});
 							})
 							.finally(() => {
-								document.body.style.cursor = '';
+								btnCopyReport.style.cursor = 'pointer';
 							});
 					});
 					let btnRight = document.createElement('div');
 					btnRight.textContent = 'HTML';
 					btnRight.className = el.querySelector('[name=tempoCalendarPlanTime]').className;
 					btnRight.addEventListener('click', (e) => {
-						document.body.style.cursor = 'wait';
+						btnCopyReport.style.cursor = 'wait';
 						helper.retrieveWorklog(tasks)
 							.then(resp => {
 								let bodyContainer = document.createElement('div');
@@ -143,7 +159,7 @@
 									.setCancelButtonText('Close');
 								modal.show();
 							}).finally(() => {
-								document.body.style.cursor = '';
+								btnCopyReport.style.cursor = 'pointer';
 							});
 					});
 					let btnLabel = document.createElement('span');

@@ -12,4 +12,19 @@ chrome.runtime.onInstalled.addListener(function(details) {
 		// When a shared module is updated
 	}
 	// chrome.tabs.create({ 'url': 'chrome://extensions/?options=' + chrome.runtime.id });//show option as popup dialog
+	setUpContextMenus();
+});
+
+function setUpContextMenus() {
+	chrome.contextMenus.create({
+		title: 'Refresh recommand time'
+		, type: 'normal'
+		, id: 'refresh_recommand_time'
+		, contexts: ['all']
+	});
+}
+chrome.contextMenus.onClicked.addListener(function(info, tab) {
+	if (info.menuItemId === 'refresh_recommand_time') {
+		chrome.tabs.sendMessage(tab.id, "refreshRecommandTime", {frameId: info.frameId});
+	}
 });

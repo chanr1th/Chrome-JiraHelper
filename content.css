@@ -9,10 +9,10 @@
     border-collapse: collapse;
     font-family: arial;
     font-size: 12px;
-    width: 100%;
-    min-width: 1300px;
+    width: 1300px;
 }
 #ct-report thead tr:first-child {
+    color: #fff;
     background-color: #0B5394;
 }
 #ct-report thead tr {
@@ -59,8 +59,7 @@
     visibility: visible;
 }
 #ct-modal .modal {
-    width: 90%;
-    max-width: 1500px;
+    max-width: 90%;
     min-height: 50px;
     background-color: white;
     display: flex;
