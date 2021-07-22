@@ -42,16 +42,6 @@ class Helper {
 		document.execCommand("copy");
 		sel.removeAllRanges();
 	}
-	copyText(copyText, msgSuccess) {
-		// navigator.clipboard.writeText(copyText).then(function() {
-		// 	if (typeof msgSuccess === 'string') {
-		// 		alert(msgSuccess);
-		// 	}
-		// }, function() {
-		// 	console.error('Failed! clipboard not copied.');
-		// });
-		return navigator.clipboard.writeText(copyText);
-	}
 	parseHumanReadableTime(second) {
 		const ONE_MINUTE = 60;// 60s = 1m
 		const ONE_HOUR = 3600;// 3600s = 1h

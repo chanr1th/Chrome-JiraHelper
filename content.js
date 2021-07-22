@@ -119,7 +119,7 @@
 						helper.retrieveWorklog(tasks)
 							.then(resp => resp.map(v => v.join('\t')))
 							.then(result => {
-								helper.copyText(result.join("\n"))
+								navigator.clipboard.writeText(result.join("\n"))
 									.then(() => {
 										toast.setMessage(`${result.length} Result(s) copied!`);
 										toast.show();
