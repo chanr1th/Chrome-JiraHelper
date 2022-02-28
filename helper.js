@@ -91,7 +91,7 @@ class Helper {
 		}
 		return second;
 	}
-	async retrieveWorklog (tasks) {
+	async retrieveWorklog(tasks) {
 		let result = [];
 		for (let i = 0 ;i < tasks.length ; i++) {
 			result.push(
@@ -102,12 +102,47 @@ class Helper {
 		}
 		return Promise.resolve(result);
 	}
-	retrieveProfile (tasks) {
+	async retrieveIssues(keys) {
+		let result = [];
+		for (let i = 0 ;i < keys.length ; i++) {
+			result.push(await fetch(`/rest/api/2/issue/${keys[i]}`).then(resp => resp.json()));
+		}
+		return Promise.resolve(result);
+	}
+	async retrieveWorklog2(tasks, date) {
+		return fetch(`/rest/tempo-timesheets/4/worklogs/search`, {
+			method: 'POST'
+			, headers: {'Content-Type': 'application/json'}
+			, body: JSON.stringify({"from":"2021-08-10", "to": "2021-08-10", "worker": ["ctang"]})
+		})
+		.then(resp => resp.json())
+		.then(resp => {
+			if (Array.isArray(resp) && resp.length > 0) {
+				let issue_keys = [];
+				resp.forEach(worklog => {
+					if (worklog.issue.projectKey !== 'TEMPO' && issue_keys.indexOf(worklog.issue.key) === -1) {
+						issue_keys.push(worklog.issue.key);
+					}
+				});
+				return this.retrieveIssues(issue_keys).then(resp => {
+					let result = [];
+					if (Array.isArray(resp) && resp.length > 0) {
+						resp.forEach(issue => {
+							result.push(this.formatReponse(issue));
+						});
+					}
+					return result;
+				});
+			}
+		});
+	}
+	retrieveProfile () {
 		fetch(`/rest/api/2/myself`)
 		.then(resp => resp.json())
 		.then(resp => {
 			if (typeof resp.displayName !== 'undefined') {
-				this.reporterName = resp.displayName;console.log("who is thi", this);
+				this.reporterName = resp.displayName;
+				this.username = resp.name;
 				chrome.storage.sync.set({reporterName : resp.displayName});
 			}
 		});
@@ -130,6 +165,7 @@ class Helper {
 			if (typeof data.fields.worklog.worklogs !== 'undefined' && data.fields.worklog.worklogs.length > 0) {
 				comment = data.fields.worklog.worklogs.pop().comment;//last worklog comment
 			}
+			console.log('comment', data.fields.worklog.worklogs);
 			return [
 				fixVersion,
 				data.key,
@@ -433,10 +469,10 @@ class Toast {
 	}
 }
 //////////Test//////////
-// let test = new Helper();
-// let time = test.parseHumanReadableTime(32460);
+let helper = new Helper();
+// let time = helper.parseHumanReadableTime(32460);
 // console.log('parsed Time', time);
-// console.log(test.getTable());
+// console.log(helper.getTable());
 
 // let data = [
 // 	['1','2','3','4','5','6','7','8','9','0']
@@ -444,4 +480,8 @@ class Toast {
 // ];
 // let tbReport = new TableReport('table-report', data);
 // console.log(tbReport.getElement());
+
+helper.retrieveWorklog2().then(resp => {
+	console.log('===> result =', resp);
+});
 

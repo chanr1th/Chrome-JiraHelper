@@ -48,8 +48,8 @@
 			function refreshRecommandTime() {
 				let calendarCanvasDayHeader = document.getElementsByName('calendarCanvasDayHeader');
 				Array.from(calendarCanvasDayHeader).forEach((el) => {
-					let logDate = el.querySelector('.sc-jGDUUe');//ex: Sun dd.mm
-					let logTime = el.querySelector('.sc-hPZeXZ');//ex: 7h 38m of 7h 30m
+					let logDate = el.firstChild.firstChild;//ex: Sun dd.mm
+					let logTime = el.firstChild.firstChild.nextSibling;//ex: 7h 38m of 7h 30m
 					if (logDate && logTime) {
 						let [dayOfWeek, date] = logDate.title.split(' ');
 						let [day, month] = date.split('.');
@@ -95,13 +95,14 @@
 					let tasks = [];
 					Array.from(logs).forEach((el, index) => {
 						// let title = el.getElementsByClassName('sc-dCzMmV sc-jAWRmi')[0].textContent;
-						let key = el.getElementsByClassName('sc-eylKsO')[0].textContent;
+						let key = el.querySelector('[name=tempoCardIssueKey]').firstChild.textContent
 						// console.log(key, title);
 						if (key.split('-')[0] !== 'TEMPO' && tasks.indexOf(key) === -1) {
 							tasks.push(key);
 						}
 					});
-					let logContainer = el.querySelector('.sc-VuRhl');
+					// let logContainer = el.querySelector('.sc-nUItV');
+					let logContainer = el.firstChild;
 					let btnContainer = document.createElement('div');
 					btnContainer.setAttribute('name', COPY_REPORT_BUTTON_NAME);
 					btnContainer.style.padding = '8px 8px 0 8px';
@@ -110,7 +111,7 @@
 					btnCopyReport.style.width = '100%';
 					btnCopyReport.className = el.querySelector('[name=tempoAddPlanWorkButton]').className;
 					let btnDual = document.createElement('div')
-					btnDual.className = 'sc-GLkNx jGrAdM';// button left and right container
+					btnDual.className = el.querySelector('[name=tempoAddPlanWorkButton]').firstChild.className;// button left and right container
 					let btnLeft = document.createElement('div');
 					btnLeft.textContent = 'Excel';
 					btnLeft.className = el.querySelector('[name=tempoCalendarLogWork]').className;
@@ -163,7 +164,7 @@
 							});
 					});
 					let btnLabel = document.createElement('span');
-					btnLabel.className = 'sc-eLpfTy dPHSwO';
+					btnLabel.className = el.querySelector('[name=tempoAddPlanWorkButton]').firstChild.nextSibling.className;
 					btnLabel.textContent = 'Copy Report';
 					btnLabel.style.display = 'flex';
 					btnLabel.style.alignItems = 'center';
