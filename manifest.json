@@ -1,7 +1,7 @@
 {
     "name": "Jira Helper",
     "version": "0.1",
-    "manifest_version": 2,
+    "manifest_version": 3,
     "description": "Jira Tempo : report generator",
     "permissions": [
         "storage"
@@ -9,10 +9,7 @@
         , "tabs"
     ],
     "background": {
-        "scripts": [
-            "background.js"
-        ],
-        "persistent": false
+        "service_worker": "background.js"
     },
     "content_scripts": [
       {
@@ -29,7 +26,7 @@
       }
     ],
     "options_page": "options.html",
-    "browser_action": {
+    "action": {
         "default_popup": "popup.html",
         "default_icon": {
             "16": "images/icon16.png",

@@ -1,74 +1,74 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<style>
-		:root {
-			--color: #ddd;
-			--color-primary: #243a5e;
-			--color-secondary: rgba(22,35,57,.9);
-			--color-light-blue: #0074d9;
-		}
-		*, *:before, *:after {
-			box-sizing: border-box;
-		}
-		html, body {
-			color: var(--color);
-			font-family: Verdana, Arial;
-			background: var(--color-primary);
-		}
-		main {
-			width: 500px;
-			margin: 24px auto;
-			padding: 24px;
-			background: var(--color-secondary);
-			border-radius: 8px;
-		}
-		main > header > span {
-			font-size: 1.2rem;
-			font-weight: bold;
-		}
-		main > section  {
-			padding: 24px 0;
-		}
-		main > footer {
-			text-align: right;
-		}
-		.button {
-			color: white;
-			background-color: var(--color-light-blue);
-			box-shadow: 0 2px 4px 0 rgb(36, 58, 94, 1);
-			cursor: pointer;
-			font-weight: bold;
-			padding: 6px 28px;
-			font-size: 1rem;
-			border: none;
-			border-radius: 2px;
-		}
-	</style>
+    <style>
+        :root {
+            --color: #ddd;
+            --color-primary: #243a5e;
+            --color-secondary: rgba(22,35,57,.9);
+            --color-light-blue: #0074d9;
+        }
+        *, *:before, *:after {
+            box-sizing: border-box;
+        }
+        html, body {
+            color: var(--color);
+            font-family: Verdana, Arial;
+            background: var(--color-primary);
+        }
+        main {
+            width: 500px;
+            margin: 24px auto;
+            padding: 24px;
+            background: var(--color-secondary);
+            border-radius: 8px;
+        }
+        main > header > span {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        main > section  {
+            padding: 24px 0;
+        }
+        main > footer {
+            text-align: right;
+        }
+        .button {
+            color: white;
+            background-color: var(--color-light-blue);
+            box-shadow: 0 2px 4px 0 rgb(36, 58, 94, 1);
+            cursor: pointer;
+            font-weight: bold;
+            padding: 6px 28px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 2px;
+        }
+    </style>
 </head>
 <body>
-	<main>
-		<header>
-			<span>Settings</span>
-		</header>
-		<section>
-			<table>
-				<tbody>
-					<tr>
-						<td class="nowrap">
-							<label for="reporter-name">Reporter name</label>
-						</td>
-						<td class="nowrap">
-							: <input type="text" id="reporter-name">
-						</td>
-					</tr>
-				</tbody>
-			</table>
-		</section>
-		<footer>
-			<button class="button" id="btn-save">Save</button>
-		</footer>
-	</main>
+    <main>
+        <header>
+            <span>Settings</span>
+        </header>
+        <section>
+            <table>
+                <tbody>
+                    <tr>
+                        <td class="nowrap">
+                            <label for="reporter-name">Reporter name</label>
+                        </td>
+                        <td class="nowrap">
+                            : <input type="text" id="reporter-name">
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+        <footer>
+            <button class="button" id="btn-save">Save</button>
+        </footer>
+    </main>
 </body>
 <script src="options.js"></script>
 </html>
