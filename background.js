@@ -17,14 +17,13 @@ chrome.runtime.onInstalled.addListener(function(details) {
 
 function setUpContextMenus() {
     chrome.contextMenus.create({
-        title: 'Refresh recommand time'
-        , type: 'normal'
-        , id: 'refresh_recommand_time'
+        title: 'Refresh all'
+        , id: 'refresh_all'
         , contexts: ['all']
     });
 }
 chrome.contextMenus.onClicked.addListener(function(info, tab) {
-    if (info.menuItemId === 'refresh_recommand_time') {
-        chrome.tabs.sendMessage(tab.id, "refreshRecommandTime", {frameId: info.frameId});
+    if (info.menuItemId === 'refresh_all') {
+        chrome.tabs.sendMessage(tab.id, "refreshAll", {frameId: info.frameId});
     }
 });

@@ -30,13 +30,18 @@
                 injectWorkLog();
             }
         });
+        chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+            if (request === "refreshAll") {
+                injectWorkLog();
+            }
+        });
         // setTimeout(injectWorkLog, 5000);
         function injectWorkLog() {
             // let myWorkLog = document.getElementById('myWorkCalendarContainer');
             // let canvasDays = document.getElementById('canvas-days');
             let calendarListViewDay = document.getElementsByName('calendarListViewDay');
             // console.log('calendarListViewDay =', calendarListViewDay.length);
-            if (calendarListViewDay.length == 0 && attempt < 3) {
+            if (calendarListViewDay.length == 0 && attempt < 5) {
                 attempt++;
                 console.log('Retry in 3s, attempting = '+attempt);
                 setTimeout(injectWorkLog, 3000);
@@ -72,11 +77,6 @@
                 });
             }
             refreshRecommandTime();
-            chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-                if (request === "refreshRecommandTime") {
-                    refreshRecommandTime();
-                }
-            });
 
             //////////Calendar/List/Day//////////
             const COPY_REPORT_BUTTON_NAME = 'tempoCopyReportButton';
