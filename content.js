@@ -67,11 +67,18 @@
                             if (isToday) {
                                 clearTimeout(window.toTimeInfo);
                                 let infos = [];
-                                infos.push(logTime.textContent);
-                                infos.push(helper.parseHumanReadableTime(MIN_TIME - logged) + ' more');
-                                infos.push('recommand = ' + helper.getRecommendLogTime(logged));
-                                logTime.title = infos.join(' | ');
+                                infos.push(helper.parseHumanReadableTime(MIN_TIME - logged));
+                                infos.push('rmd: ' + helper.getRecommendLogTime(logged));
+                                el.firstChild.style.height = '24px';
+                                let div = document.createElement('div');
+                                div.style.height = '24px';
+                                div.style.textAlign = 'center';
+                                div.style.lineHeight = '1';
+                                div.textContent = infos.join(' | ');
+                                el.firstChild.after(div);
                             }
+                        } else {
+                            logTime.style.color = 'inherit';
                         }
                     }
                 });

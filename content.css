@@ -86,6 +86,7 @@
 #ct-modal .modal section {
     padding: 12px 0;
     overflow-x: auto;
+    max-height: 60vh;
 }
 #ct-modal .modal footer {
     padding: 12px 0;
